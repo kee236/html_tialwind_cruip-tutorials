@@ -1,0 +1,54 @@
+เนื่องจากคุณไม่ได้ระบุเจาะจงว่าต้องการโค้ด MySQL สำหรับส่วนใดของการจัดการขนส่งสินค้า (ที่เราได้คุยกันไปแล้ว) หรือส่วนการตั้งค่าระบบชำระเงิน (ที่เราเพิ่งคุยกันจบ) ผมขอเสนอโค้ด MySQL ที่อาจเป็นประโยชน์เพิ่มเติมสำหรับทั้งสองส่วนนะครับ:
+1. โค้ด MySQL เพิ่มเติมสำหรับการจัดการขนส่งสินค้า:
+ * การเพิ่มข้อมูลเริ่มต้นในตาราง shipping_methods:
+   INSERT INTO `shipping_methods` (`method_name`, `display_name`, `description`, `is_enabled`, `settings_table`, `order`) VALUES
+('ems', 'EMS ไปรษณีย์ไทย', 'บริการจัดส่งด่วนพิเศษจากไปรษณีย์ไทย', 1, 'ems_settings', 1),
+('kerry', 'Kerry Express', 'บริการจัดส่งพัสดุด่วนจาก Kerry Express', 1, 'kerry_settings', 2),
+('registered_mail', 'ลงทะเบียน ไปรษณีย์ไทย', 'บริการจัดส่งแบบลงทะเบียนจากไปรษณีย์ไทย', 1, 'registered_mail_settings', 3),
+('local_delivery', 'จัดส่งโดยร้านค้า', 'บริการจัดส่งโดยพนักงานของร้านค้าเอง', 1, 'local_delivery_settings', 4);
+
+ * การเพิ่มข้อมูลเริ่มต้นในตาราง shipping_zones:
+   INSERT INTO `shipping_zones` (`zone_name`) VALUES
+('กรุงเทพมหานคร'),
+('ปริมณฑล'),
+('ต่างจังหวัด (ทั่วไป)');
+
+ * การเพิ่มข้อมูลเริ่มต้นในตาราง zone_locations (ตัวอย่างรหัสไปรษณีย์):
+   INSERT INTO `zone_locations` (`zone_id`, `location_code`, `location_type`) VALUES
+(1, '10100', 'postcode'),
+(1, '10200', 'postcode'),
+(2, '11000', 'postcode'),
+(2, '12000', 'postcode'),
+(3, '20000', 'postcode'),
+(3, '30000', 'postcode');
+
+ * การเพิ่มข้อมูลเริ่มต้นในตาราง shipping_rates (ตัวอย่างอัตราค่าส่ง):
+   INSERT INTO `shipping_rates` (`method_id`, `zone_id`, `min_weight_kg`, `max_weight_kg`, `rate`) VALUES
+(1, 1, 0.00, 1.00, 50.00),
+(1, 1, 1.01, 3.00, 70.00),
+(2, 1, 0.00, 0.50, 60.00),
+(2, 2, 0.00, 0.50, 70.00),
+(3, 3, 0.00, 2.00, 40.00);
+
+2. โค้ด MySQL เพิ่มเติมสำหรับการตั้งค่าระบบชำระเงิน:
+ * การเพิ่มข้อมูลเริ่มต้นในตาราง payment_gateways:
+   INSERT INTO `payment_gateways` (`gateway_name`, `display_name`, `is_enabled`) VALUES
+('paypal', 'PayPal', 0),
+('stripe', 'Stripe', 0),
+('bank_transfer', 'โอนเงินผ่านธนาคาร', 1),
+('promptpay', 'PromptPay', 1),
+('ewallets', 'E-wallets', 0),
+('payment_gateways', 'Payment Gateways', 0),
+('custom', 'กำหนดเอง', 0);
+
+ * การเพิ่มข้อมูลเริ่มต้นในตาราง payment_gateway_providers:
+   INSERT INTO `payment_gateway_providers` (`provider_name`) VALUES
+('Omise'),
+('2C2P'),
+('Paypal Commerce Platform');
+
+คำแนะนำ:
+ * คุณสามารถรันโค้ด SQL เหล่านี้บน Database ของคุณ (ผ่าน phpMyAdmin, MySQL Workbench, หรือ Command Line) เพื่อเพิ่มข้อมูลเริ่มต้นที่จำเป็นสำหรับการทดสอบและใช้งานระบบของคุณ
+ * อย่าลืมปรับเปลี่ยนข้อมูล (เช่น ชื่อ, อัตราค่าส่ง, รหัสไปรษณีย์, ชื่อผู้ให้บริการ) ให้ตรงกับความต้องการของธุรกิจของคุณ
+ * สำหรับตารางการตั้งค่าเฉพาะของแต่ละ Payment Gateway (เช่น paypal_settings, stripe_settings), คุณอาจต้องเพิ่มข้อมูลเริ่มต้นบางส่วนหากมีค่า Default ที่ต้องการตั้งไว้
+หากคุณต้องการโค้ด MySQL สำหรับการดำเนินการอื่นๆ (เช่น การดึงข้อมูลเฉพาะเจาะจง, การแก้ไขข้อมูล, หรือการสร้าง Query ที่ซับซ้อน) โปรดระบุรายละเอียดเพิ่มเติม ผมยินดีช่วยเหลือครับ!
