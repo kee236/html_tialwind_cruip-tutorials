@@ -91,4 +91,66 @@
                         <h3>ตั้งค่า Kerry</h3>
                         <div class="form-group">
                             <label>API Key:</label>
-                            <input type="text" class="form-control" name="kerry_settings[api_key]" value="<?= esc($kerry_settings['api_key']
+                            <input type="text" class="form-control" name="kerry_settings[api_key]" value="<?= esc($kerry_settings['api_key'] ?? '') ?>">
+                        </div>
+                        <div class="form-group">
+                            <label>หมายเลขบัญชี:</label>
+                            <input type="text" class="form-control" name="kerry_settings[account_number]" value="<?= esc($kerry_settings['account_number'] ?? '') ?>">
+                        </div>
+                        <div class="form-group">
+                            <label>ID ตารางอัตราค่าจัดส่ง:</label>
+                            <input type="number" class="form-control" name="kerry_settings[rate_table_id]" value="<?= esc($kerry_settings['rate_table_id'] ?? '') ?>">
+                        </div>
+                        <div class="form-group">
+                            <label>อัตราค่าจัดส่งเริ่มต้น:</label>
+                            <input type="number" class="form-control" name="kerry_settings[default_rate]" value="<?= esc($kerry_settings['default_rate'] ?? '0.00') ?>" step="0.01">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">บันทึกการตั้งค่าการจัดส่ง</button>
+                </form>
+            </div>
+
+            <div class="tab-pane fade" id="integration" role="tabpanel" aria-labelledby="integration-tab">
+                <h2>ตั้งค่าการเชื่อมต่อระบบอื่นๆ</h2>
+                <form method="post" action="<?= site_url('shipping-settings/save_integration_settings') ?>">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>ชื่อการเชื่อมต่อ</th>
+                                <th>สถานะ</th>
+                                <th>การตั้งค่า (JSON)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php if (!empty($integration_settings)) : ?>
+                                <?php foreach ($integration_settings as $integration) : ?>
+                                    <tr>
+                                        <td><?= esc($integration['display_name']) ?></td>
+                                        <td>
+                                            <div class="form-check">
+                                                <input type="checkbox" class="form-check-input" name="integrations[<?= $integration['integration_id'] ?>][is_enabled]" value="1" <?= $integration['is_enabled'] ? 'checked' : '' ?>>
+                                                <label class="form-check-label">เปิดใช้งาน</label>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <textarea class="form-control" name="integrations[<?= $integration['integration_id'] ?>][config]"><?= esc($integration['config_json']) ?></textarea>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            <?php else : ?>
+                                <tr><td colspan="3">ไม่พบการเชื่อมต่อระบบ</td></tr>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
+                    <button type="submit" class="btn btn-primary">บันทึกการตั้งค่าการเชื่อมต่อ</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
